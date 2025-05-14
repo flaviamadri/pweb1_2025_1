@@ -17,28 +17,10 @@
 <?php 
 if(!empty($_POST)){
 
-    $db = new db();
-    $conn = $db->conn();
-    
-    $sql= "INSERT INTO usuario (nome, cpf, telefone, email) VALUES (?,?,?,?)";
+    $db = new db('usuario');
+    $db-> store(dados:$_POST);
 
-    $st = $conn->prepare( $sql);
-    $st->execute([
-        $_POST['nome'],
-        $_POST['cpf'],
-        $_POST['telefone'],
-        $_POST['email']
-    ]);
-    
-    echo $_POST['nome']. "<br>";
-    echo $_POST['email']. "<br>";
-    echo $_POST['telefone']. "<br>";
-    echo $_POST['cpf']. "<br>";
-
-    echo $_REQUEST['nome']. "<br>";
-    echo $_REQUEST['email']. "<br>";
-    echo $_REQUEST['telefone']. "<br>";
-    echo $_REQUEST['cpf']. "<br>";
+     header(header: 'lacation:./UsuarioList.php');
 }
 
 
@@ -79,7 +61,7 @@ if(!empty($_POST)){
       <div class="row">
         <div class="col">
             <button type="submit" class="btn btn-primary">Salvar</button>
-            <a href="/UsuarioList.php" class="btn btn-secundary">Voltar</a>
+            <a href="./UsuarioList.php" class="btn btn-secundary">Voltar</a>
         </div>
       </div>
         </form>

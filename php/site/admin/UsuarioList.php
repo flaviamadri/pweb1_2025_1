@@ -1,3 +1,7 @@
+<?php
+     include "./db.class.php"
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,12 +14,12 @@
         integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
 </head>
 
-<?php
-if (!empty($_POST)) {
+<?php 
 
-    echo $_POST['nome'] . "<br>";
-}
-
+    $db = new db('usuario');
+  
+    $dados = $st->all();
+    
 ?>
 
 <body>
@@ -44,7 +48,7 @@ if (!empty($_POST)) {
                 <div class="row mt-4">
                     <div class="col">
                         <button type="submit" class="btn btn-primary">Buscar</button>
-                        <a href="/UsuarioForm.php" class="btn btn-secondary">Cadastrar</a>
+                        <a href="./UsuarioForm.php" class="btn btn-secondary">Cadastrar</a>
                     </div>
                 </div>
             </form>
@@ -55,30 +59,26 @@ if (!empty($_POST)) {
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">CPF</th>
+                        <th scope="col">Telefone</th>
+                        <th scope="col">Email</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
+                    <?php
+                        foreach($dados as $item){
+                            echo "
+                            <tr>
+                        <th scope='row'>$item->id</th>
+                        <td>$item->nome</td>
+                        <td>$item->cpf</td>
+                        <td>$item->telefone</td>
+                        <td>$item->email</td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>John</td>
-                        <td>Doe</td>
-                        <td>@social</td>
-                    </tr>
+                    ";}
+                    ?>
+                    
                 </tbody>
             </table>
         </div>
