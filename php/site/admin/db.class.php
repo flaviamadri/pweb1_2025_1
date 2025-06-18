@@ -8,7 +8,6 @@ class db
     private $password = "";
     private $port = "3306";
     private $dbname = "db_pweb1_2025_1";
-
     private $table_name;
 
     public function __construct($table_name)
@@ -33,7 +32,6 @@ class db
             );
 
             return $conn;
-
         } catch (PDOException $e) {
             echo "Erro: " . $e->getMessage();
         }
@@ -49,20 +47,15 @@ class db
         $st->execute();
 
         return $st->fetchAll(PDO::FETCH_CLASS);
-        
     }
 
     public function store($dados)
-
     {
-        unset($dados['id']);//remove o campo id
-        
+        unset($dados['id']); //remove o campo id 
         $conn = $this->conn();
 
         $sql = "INSERT INTO $this->table_name (";
-
         $flag = 0;
-
         $arrayDados = [];
         foreach ($dados as $campo => $valor) {
             if ($flag == 0) {
@@ -90,18 +83,14 @@ class db
 
         $st = $conn->prepare($sql);
         $st->execute($arrayDados);
-
     }
 
     public function update($dados)
-
     {
         $id = $dados['id'];
-
         $conn = $this->conn();
-        
+        //UPDATE `usuario` SET `nome`='Chaves' WHERE `id`=8;
         $sql = "UPDATE $this->table_name SET ";
-
         $flag = 0;
         $arrayDados = [];
 
@@ -119,26 +108,35 @@ class db
 
         $st = $conn->prepare($sql);
         $st->execute($arrayDados);
-
     }
 
-    public function destroy($id): array
+    public function find($id)
+    {
+        //SELECT * FROM usuario WHERE id = 8;
+        $conn = $this->conn();
+
+        $sql = "SELECT * FROM $this->table_name WHERE id = ?";
+
+        $st = $conn->prepare($sql);
+        $st->execute([$id]);
+
+        return $st->fetchObject();
+    }
+
+    public function destroy($id)
     {
         $conn = $this->conn();
 
         $sql = "DELETE FROM $this->table_name WHERE id = ?";
 
-        $st = $conn->prepare(query: $sql);
-
+        $st = $conn->prepare($sql);
         $st->execute([$id]);
 
         return $st->fetchAll(PDO::FETCH_CLASS);
-
     }
 
     public function search($dados)
     {
-
         $campo = $dados['tipo'];
         $valor = $dados['valor'];
 
@@ -147,28 +145,38 @@ class db
         $sql = "SELECT * FROM $this->table_name WHERE $campo LIKE ?";
 
         $st = $conn->prepare($sql);
-
         $st->execute(["%$valor%"]);
 
         return $st->fetchAll(PDO::FETCH_CLASS);
-        
     }
 
-    public function find($id)
+    public function login($dados)
     {
+        //SELECT * FROM usuario WHERE id = 8;
         $conn = $this->conn();
 
-        $sql = "SELECT * FROM $this->table_name WHERE id = ?";
+        $sql = "SELECT * FROM $this->table_name WHERE login = ?";
 
         $st = $conn->prepare($sql);
+        $st->execute([$dados['login']]);
 
-        $st->execute([$id]);
-
-        return $st->fetchObject();
-
+        $result = $st->fetchObject();
+        //   var_dump($result, $dados['senha']);
+        //   exit;
+        if (password_verify($dados['senha'], $result->senha)) {
+            return $result;
+        } else {
+            return "error";
+        }
     }
 
-   
+    function checkLogin()
+    {
+        session_start();
 
-
+        if (empty($_SESSION['login'])) {
+            session_destroy();
+            header('Location: ../Login.php?error=Sessao Expirada!');
+        }
+    }
 }
